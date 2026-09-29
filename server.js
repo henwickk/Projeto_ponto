@@ -13,7 +13,7 @@ const conexao = mysql.createConnection({
     port: 3306
 })
 
-conexao.connect((erro) =>{
+conexao.connect((erro) => {
     if (erro) {
         console.error('Erro ao conectar ao MYSQL: ', erro);
         return;
@@ -22,9 +22,52 @@ conexao.connect((erro) =>{
     console.log('Conectado com sucesso ao banco de dados MYSQL!')
 })
 
-app.post('/cadastrarPonto', (res, res) =>{
-    const {cpf} 
-} )
+app.post('/cadastrarPonto', (req, res) => {
+    const { cpf } = req.body;
+
+    conexao.query('SELECT id_trabalhador FROM trabalhadores WHERE cpf = ?',
+        [cpf],
+        (erro, resultado) => {
+            if (erro) {
+                return res.status(404).json({
+                    mensagem: "Erro ao encontrar CPF."
+                });
+            }
+
+            if (resultado.length === 0) {
+                return res.status(500).json({
+                    mensagem: "CPF não encontrado."
+                });
+            }
+
+            const id_trabalhador = resultado[0].id_trabalhador
+
+            conexao.query('INSERT INTO pontos (id_trabalhador) VALUES (?)',
+                [id_trabalhador],
+                (erro, resultado) => {
+                    if (erro) {
+                        return res.status(500).json({
+                            mensagem: "Erro ao cadastrar ponto."
+                        });
+                    }
+
+                    if (resultado) {
+                        return res.status(200).json({
+                            mensagem: "Ponto Cadastrado com sucesso!"
+                        });
+                    }
+
+                    console.log(id_trabalhador)
+                }
+            )
+
+        }
+    );
+});
+
+
+
+
 
 
 app.listen(3000, () => {
