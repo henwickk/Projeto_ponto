@@ -42,12 +42,14 @@ app.post('/cadastrarPonto', (req, res) => {
 
             const id_trabalhador = resultado[0].id_trabalhador
 
-            conexao.query('INSERT INTO pontos (id_trabalhador) VALUES (?)',
+            conexao.query('INSERT INTO ponto (id_trabalhador) VALUES (?)',
                 [id_trabalhador],
                 (erro, resultado) => {
+                    console.log("ERRO DO INSERT:", erro);
                     if (erro) {
                         return res.status(500).json({
                             mensagem: "Erro ao cadastrar ponto."
+                            
                         });
                     }
 
@@ -58,6 +60,7 @@ app.post('/cadastrarPonto', (req, res) => {
                     }
 
                     console.log(id_trabalhador)
+                    
                 }
             )
 
